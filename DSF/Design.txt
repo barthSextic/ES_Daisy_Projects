@@ -1,0 +1,39 @@
+=============
+=== Input ===
+=============
+
+Jacks
+    Stereo audio input (L, R)
+    FM 1
+    FM 2
+    Resonance Control
+    Filter Spread
+
+Knobs
+    Cutoff
+    Resonance
+    Spread
+    Final HP Cutoff
+
+Button
+    Filter Select
+
+===============
+=== Process ===
+===============
+
+Get values from ADCs for filter controls
+Sum corresponding jack and knob values
+Normalize Parameter Values to [0, 1]
+
+Knob click incriments counter that selects filter
+
+sum left and right channels
+
+==============
+=== Output ===
+==============
+
+Stereo audio Output
+LED corresponding to filter type
+LED corresponding to filter cutoff
