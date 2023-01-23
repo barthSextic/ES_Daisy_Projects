@@ -94,9 +94,7 @@ void AudioCallback(AudioHandle::InputBuffer  in,
     cutoffSquared = cutoff * cutoff;
 
     // WRITE CUTOFF VALUE TO LED
-    // patch.WriteCvOut(CV_OUT_2, (cutoff * 2) + 1);
     led.Set(cutoff);
-    led.Update();
 
     // COMPUTE IMAGES
     imageL1 = RestrictRange(pow(BASE_1, -spread) * cutoffSquared, 0.0f, 1.0f) * CUTOFF_RANGE;
@@ -125,6 +123,8 @@ void AudioCallback(AudioHandle::InputBuffer  in,
     // PROCESS SAMPLES
     for(size_t i = 0; i < size; i++)
     {
+        led.Update();
+
         highPassL.Process(in[0][i]);
         highPassR.Process(in[1][i]);
 
@@ -165,7 +165,8 @@ int main(void)
     samplerate = patch.AudioSampleRate();
 
     // GPIO pin, bool invert, samplerate
-    led.Init(patch.C1, false, samplerate);
+    // B8 sends PWM signal from 0V - 3.3V at ~500 mA
+    led.Init(patch.B8, false, samplerate);
 
     svfL1.Init(samplerate);
     svfL2.Init(samplerate);
