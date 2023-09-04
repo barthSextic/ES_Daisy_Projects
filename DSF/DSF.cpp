@@ -25,11 +25,14 @@ const float RESONANCE_MAX    = 1.0f;
 const float BASE_1           = 4.0f;
 const float BASE_2           = 1.7f;
 const float VOLUME_NORMAL    = 0.5f;
+const float RED_SCALE        = 1.0f;
+const float GREEN_SCALE      = 0.5f;
+const float BLUE_SCALE       = 0.5f;
 const int   FILTER_STATES    = 5;
 
 DaisyPatchSM        patch;
 Switch              button;
-Led                 led;
+Led                 led, ledB, ledG, ledR;
 Svf                 svfL1, svfL2, svfR1, svfR2, highPassL, highPassR;
 
 float   cutoff, fmKnob, fmCV1, fmCV2, cutoffSquared, 
@@ -123,7 +126,11 @@ void AudioCallback(AudioHandle::InputBuffer  in,
     // PROCESS SAMPLES
     for(size_t i = 0; i < size; i++)
     {
+        // Update LED Values
         led.Update();
+        ledB.Update();
+        ledG.Update();
+        ledR.Update();
 
         highPassL.Process(in[0][i]);
         highPassR.Process(in[1][i]);
@@ -136,19 +143,39 @@ void AudioCallback(AudioHandle::InputBuffer  in,
         // COMBINE FILTERS
         if (buttonValue == 1) {
             out[0][i] = (svfL1.Band() + svfL2.Band()) * VOLUME_NORMAL; 
-            out[1][i] = (svfR1.Band() + svfR2.Band()) * VOLUME_NORMAL; 
+            out[1][i] = (svfR1.Band() + svfR2.Band()) * VOLUME_NORMAL;
+
+            ledB.Set(1);
+            ledG.Set(0);
+            ledR.Set(0); 
         } else if (buttonValue == 2) {
             out[0][i] = (svfL1.High() + svfL2.High()) * VOLUME_NORMAL; 
             out[1][i] = (svfR1.High() + svfR2.High()) * VOLUME_NORMAL; 
+
+            ledB.Set(0);
+            ledG.Set(1);
+            ledR.Set(0); 
         } else if (buttonValue == 3) {
             out[0][i] = (svfL1.Notch() + svfL2.Notch()) * VOLUME_NORMAL; 
-            out[1][i] = (svfR1.Notch() + svfR2.Notch()) * VOLUME_NORMAL; 
+            out[1][i] = (svfR1.Notch() + svfR2.Notch()) * VOLUME_NORMAL;
+
+            ledB.Set(0);
+            ledG.Set(0);
+            ledR.Set(1);  
         } else if (buttonValue == 4) {
             out[0][i] = (svfL1.Peak() + svfL2.Peak()) * VOLUME_NORMAL; 
             out[1][i] = (svfR1.Peak() + svfR2.Peak()) * VOLUME_NORMAL; 
+
+            ledB.Set(0.5f);
+            ledG.Set(0);
+            ledR.Set(1); 
         } else {
             out[0][i] = (svfL1.Low() + svfL2.Low()) * VOLUME_NORMAL; 
             out[1][i] = (svfR1.Low() + svfR2.Low()) * VOLUME_NORMAL;
+
+            ledB.Set(0);
+            ledG.Set(0.5f);
+            ledR.Set(1); 
         }
 
     }
@@ -167,6 +194,9 @@ int main(void)
     // GPIO pin, bool invert, samplerate
     // B8 sends PWM signal from 0V - 3.3V at ~500 mA
     led.Init(patch.B8, false, samplerate);
+    ledB.Init(patch.D3, false, samplerate);
+    ledG.Init(patch.D4, false, samplerate);
+    ledR.Init(patch.D5, false, samplerate);
 
     svfL1.Init(samplerate);
     svfL2.Init(samplerate);

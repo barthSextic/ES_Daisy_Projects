@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\theri\\OneDrive\\Desktop\\DaisyExamples\\MyProjects\\ENV2\\build",
+            "binaryPath": "c:\\Users\\theri\\OneDrive\\Desktop\\DaisyExamples\\MyProjects\\ENV2\\build\\ENV2.elf",
+            "binaryArgs": []
+        }
+    ]
+}
